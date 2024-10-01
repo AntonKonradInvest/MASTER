@@ -1,5 +1,5 @@
 class Document:
-    def __init__(self, boekjaar, dagboek, nummer, datum, relatiecode, vervaldatum, tebetalen, basisbedrag):
+    def __init__(self, boekjaar, dagboek, nummer, datum, relatiecode, vervaldatum, tebetalen, basisbedrag, omschrijving):
         self.boekjaar = boekjaar
         self.dagboek = dagboek
         self.nummer = nummer
@@ -13,7 +13,7 @@ class Document:
         self.btwtebetalen = tebetalen - basisbedrag
         self.btwcode = self.get_btw_code()
         self.valutacode = "EUR"
-        self.omschrijving = ""  # Placeholder
+        self.omschrijving = omschrijving  # Placeholder
         self.koers = ""  # Placeholder
         self.vertegenw_code = ""  # Placeholder
         self.statusfact_status = "OK"  # Placeholder

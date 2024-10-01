@@ -1,42 +1,42 @@
 Name;Relatiecode
 L - REYCKMANS I;G303
-IMMO TOP INVEST BVBA;9
-JAN STAS IMMOBILI�N BVBA;11
-Gerlachestraat 12;87
-B&R Construct NV;100
-Claire;108
-Dahlia;109
-Vereniging van mede-eigenaars van de Residentie Brannekes te 2230 Herselt, Blaubergsesteenweg 11-13;112
-Jack;114
-De Blijde;134
-VME - Vogelensanck te Leuven (Kessel-Lo), Koning Albertlaan 72/76;142
-VME Residentie Binnenhof Uitbreiding te Leuven, Justus Lipsiusstraat 36/40 voorheen 22/26;143
-Consortium;147
-Vereniging van Mede-eigenaars Residentie Consortium te 3500 Hasselt, Kunstlaan 8;147
-Helstraat 4-;148
-Chopin;149
-TILLINVEST;150
-Vereniging van mede-eigenaars van het gebouw Residentie Park-Lane te 3020 Herent, Mechelsesteenweg 374-380;151
+IMMO TOP INVEST BVBA;000009
+JAN STAS IMMOBILI�N BVBA;000011
+Gerlachestraat 12;000087
+B&R Construct NV;000100
+Claire;000108
+Dahlia;000109
+Vereniging van mede-eigenaars van de Residentie Brannekes te 2230 Herselt, Blaubergsesteenweg 11-13;000112
+Jack;0000114
+De Blijde;000134
+VME - Vogelensanck te Leuven (Kessel-Lo), Koning Albertlaan 72/76;000142
+VME Residentie Binnenhof Uitbreiding te Leuven, Justus Lipsiusstraat 36/40 voorheen 22/26;000143
+Consortium;000147
+Vereniging van Mede-eigenaars Residentie Consortium te 3500 Hasselt, Kunstlaan 8;000147
+Helstraat 4-;H073
+Chopin;000149
+TILLINVEST;000150
+Vereniging van mede-eigenaars van het gebouw Residentie Park-Lane te 3020 Herent, Mechelsesteenweg 374-380;000151
 *E* - REGENT;R317
 *E* - SOLLEVELDEN 65 - 67;R310
-Bert Schoofs Advocaat;177
-Vereniging van Mede-eigenaars Residentie Jef Denijn;184
-Daelhof;192
-CALLANT VERZEKERINGEN KEMPEN NV;193
-Hendrickx Leo;194
-QALIBRATE BVBA;196
-Moto Geel;197
-VDV BVBA;198
-VME Residentie MI CASA te Herent, Mechelsesteenweg 550;200
-Oudebaan;201
-Heylen Bouwonderneming BVBA;204
-Luts Ivo;205
-Laenen Niels;206
-MATEXI PROJECTS NV;207
-Stefanie Anthonis;208
-Wijkmolen (000509);209
-Parkeergarage De Smisse;211
-De Pastorij Hulst (000132);212
+Bert Schoofs Advocaat;000177
+Vereniging van Mede-eigenaars Residentie Jef Denijn;000184
+Daelhof;000192
+CALLANT VERZEKERINGEN KEMPEN NV;000193
+Hendrickx Leo;000194
+QALIBRATE BVBA;000196
+Moto Geel;000197
+VDV BVBA;000198
+VME Residentie MI CASA te Herent, Mechelsesteenweg 550;000200
+Oudebaan;000201
+Heylen Bouwonderneming BVBA;000204
+Luts Ivo;000205
+Laenen Niels;000206
+MATEXI PROJECTS NV;000207
+Stefanie Anthonis;000208
+Wijkmolen (000509);000209
+Parkeergarage De Smisse;000211
+De Pastorij Hulst (000132);000212
 Aan de Kerk Fase I (000012);D001
 Aan de Kerk Parkings (000013);D002
 Aan de Markt (000014);D003
@@ -45,7 +45,6 @@ Allerheiligenberg 3 (000022);D005
 Atrium (000035);D006
 Bartham (000038);D007
 Begijnenstraat 44 (000041);D008
-Begijnenstraat 60 (000042);D008
 Bevrijdingsstraat 35 (000047);D009
 Binnenhof (000048);D010
 Brabantshof (000060);D011
@@ -792,7 +791,6 @@ Vesalius (000831);H275
 Vesalius;H275
 Den Tember (000606);H276
 Aldestraat 15 (000020);H277
-Chopin;H278
 PetiteFleur (000608);H278
 Domein Kasteel Nieuwenhoven (000166);H279
 Rederijkerstraat (000614);H280
@@ -1012,7 +1010,6 @@ Andrea (000854);L189
 VERENIGING VAN MEDE-EIGENAARS RESIDENTIE ANDREA TE BOUTERSEM LEUVENSESTEENWEG 347-349;L189
 Albert I;L190
 Sluismolen;L191
-Den Tympel (000161);L192
 Concordia (000852);L195
 Lebrun (000837);L196
 Kruisboog (000838);L197
@@ -1384,19 +1381,19 @@ VIANEN  (ROMA);R253
 ZIMMER I;R103
 ZIMMER II;R102
 ZONSTRAAT 44;R179
-Residentie Brouwershaven;116
+Residentie Brouwershaven;L209
 Ecodroom ABIS (000176);H243
 Ecodroom A (000175);H014
-Dorenberg;268
+Dorenberg;000268
 Ecodroom Parking (000178);H048
 Co�me;H318
 Willy;225
-Hertogenpark Domein;275
+Hertogenpark Domein;000275
 No�;H315
 Petrushof Hoofdvereniging;214
 Delorge Businesspark I (000651);H297
 Schoonaerde;D088
-Mi Casa;200
+Mi Casa;000200
 Brabantshof (000060) (niet meer in beheer);D011
 PHARMACIE;R339
 LOKERENSTRAAT 86 -88;R331
@@ -1413,12 +1410,12 @@ Djef Swennestraat;H134
 Wannes;H012
 Brusello;H236
 De Keyzer;D022
-Alhambra;278
+Alhambra;000278
 Alverman;249
 Andrea;L189
 Archiv 0.1;228
 Arcus;236
-Artemis;285
+Artemis;000285
 Astrid;L207
 Bareel Appartementen Complex (000860);L203
 Bareel Gebouw A (000856);L199
@@ -1426,8 +1423,8 @@ Bareel Gebouw B (000857);L200
 Bareel Gebouw C (000858);L201
 Bareel Gebouw D (000859);L202
 Bareel Kelderverdieping (000861);L204
-Belle Vue II;282
-Binnenhof Leuven;286
+Belle Vue II;000282
+Binnenhof Leuven;000286
 Bredero;260
 Brouwershaven;L209
 Brouwmeester;268
@@ -1441,8 +1438,8 @@ Den Tympel II (000843);L192
 Edelweiss (000842);L194
 Ella;256
 Jordaens;234
-Keyberg;279
-Mistral;283
+Keyberg;000279
+Mistral;000283
 Mont� Domus;271
 Oud Zwembad;206
 Papenakker;L218
@@ -1450,12 +1447,12 @@ Park 51 Gebouw D;L219
 Petrushof I;235
 Poortvelden;269
 Ramberghof;252
-Route 68;289
+Route 68;000289
 Schoolstraat;L223
 Terra Verde;254
 Vaartstraat;224
-Cartijnenveld � Cartijnenveld B5;288
-Welvaart;290
+Cartijnenveld � Cartijnenveld B5;000288
+Welvaart;000290
 ASTER;270
 DE MAALDERIJ;G360
 DE NEERPOORT;G356
@@ -1490,11 +1487,11 @@ YASMINE;G363
 SALIS;G370
 PARK 'T BOSKE;G366
 Geertrui;262
-Esplanade I;287
-Hertogenpark fase 5 blok VI en VII (137);129
+Esplanade I;000287
+Hertogenpark fase 5 blok VI en VII (137);000129
 Milda - Blok C;266
 Milda- Blok B;265
-Mechelsesteenweg 97-99;292
+Mechelsesteenweg 97-99;000292
 Delorge Businesspark II (000652);H298
 Kuringersteenweg 283;282
 Milda - Blok A en Blok D;264
@@ -1506,8 +1503,8 @@ Parc Du Soleil;284
 Milda Hoofdvereniging;240
 De Vilhoek;H321
 Kapelhoek;H090
-Jack (niet meer in beheer);114
-Binnenhof Uitbreiding;143
+Jack (niet meer in beheer);000114
+Binnenhof Uitbreiding;000143
 Grote Markt Koning Albertstraat (000211);H063
 Schuurmansbos (000590) (niet meer in beheer);D113
 Aan de Markt;D003
@@ -1526,7 +1523,7 @@ ZZ_CENTRO;R305
 R 285 MECHELSESTEENWEG 235 - 241;R285
 KORENPLEIN HV;302
 MOLENHOF MKH;311
-VINKENHOF;299
+VINKENHOF;000299
 DAMN (SAMBER);314
 MECHELSESTEENWEG 235 - 241;R285
 ZZ_DE SMEDERIJ;R283
@@ -1537,23 +1534,23 @@ Berkenbos (000046) (niet meer in beheer);H193
 De Pastorij (000131) (niet meer in beheer);H057
 ZZZ - Begijnenstraat 44 (000041) (niet meer in be);D008
 ZZZ - Hombroeckx (000242)(niet meer in beheer);L041
-Villa Aragone;309
+Villa Aragone;000309
 Park 51 - Zone A;258
 KORENPLEIN A;301
 STADSPOORT;342
-ZZZ_CATHARINA (uit beheer);
+ZZZ_CATHARINA (uit beheer);R261
 LIERHOF BLOK 1 (Eeuwfeestlaan 203 + 207);R274
 ZZ_DE TOEKOMST;R262
 Donatello (000169);H324
 Julianus;303
 HUB01-02;340
 Sixteen;349
-NOOR;323
-'t DORP WESTERLO;295
+NOOR;000323
+'t DORP WESTERLO;000295
 PANNENHUIS;354
-Spelver;310
+Spelver;000310
 Ambachtenlaan 40;350
-Cartijnenveld;288
+Cartijnenveld;000288
 Schreurs;328
 Coëme;H318
 Taïga (000674);H294
@@ -1577,10 +1574,7 @@ Kasteel Nieuwenhoven Nieuw (niet meer in beheer);H304
 Bloesemhof (000703) (niet meer in beheer);H157
 t Kroontje, Beverlo (000444) (niet meer in beheer);D060
 Cappellenhof (000067) (niet meer in beheer);000106
-Cappellenhof (000067) (niet meer in beheer);000106
 Kluisberg (000669) (niet meer in beheer);D123
-;NAN
-Gebouw;GEBOUW
 Aquarius (000030) (niet meer in beheer);D081
 ZZZ - Vlierbeekveld (uit beheer) (000493);L100
 Villa Meurkenshof (000486)(niet meer in beheer);H119
@@ -1628,3 +1622,103 @@ Liemingen;353
 Mantelius;000294
 College House;358
 Wijckmans 1-3;000304
+Park-Lane (Herent);000151
+VME YOU;L221
+VME Schreurs;328
+NOTENLAER;G119
+VME (deelvereniging) gebouw A residentie Bareel te Kortenberg, Bareelplein 1;L199
+Residentie Hertogenpark blok 5 (139);L216
+Hertogenpark Blok 3 (143-145);L217
+Hertogenpark Blok 6 & 7 (137);000129
+Centre Ville;R329
+R - LIERSVELD;G043
+L - 'T DORP;G232
+Torenzicht Nijlen;R341
+Tineke;R372
+De Draaiboom;000326
+Residentie 21;306
+R - TER DONK;G093
+Residentie Luster;000327
+R - ROEPERSTRAATJE 1-7;G175
+Van Twembeke Anja;000045
+De Vylder Paul;000060
+Smolders Maarten;000044
+Simons Patrick;000065
+Dokter Isabelle Reyntjens Bv;000038
+Cuypers Marie Lynn;000076
+Baert Jan;000053
+Nina Miladinovic;000328
+Alexandra Criveanu;000329
+Guo Yizuo;000330
+Ayla Ermers;000331
+Johan Vanaken;000332
+Marianna Bartrick Krana;000333
+Patrick Maina Ngibuini;000334
+Semen Shmalko;000335
+Bindiya Modhvadia;000336
+Dakota Rebecca Lafaille;000338
+Öykü Güleç;000337
+Aboubacar Balde;000339
+Jamila Majidova;000340
+Jinggui Wang;000341
+Cennet Inceoglu;000342
+Hélène Kaddari Vergote;000343
+Lotte Schoofs;000344
+Huang Haorun;000345
+Kaat Van Hoof;000346
+Nys Roger;000347
+RESIDENTIE EBENORA III;G325
+Residentie Binnenhof Leuven;000286
+VME Residentie Geertrui te Leuven, Mechelsestraat 155;262
+ARTEBEAU BV;000348
+Vereniging van mede-eigenaars Residentie JOANNA - EMILIA;G321
+Residentie Astrid;L207
+VME Residentie PARK 51 - Gebouw D te Herent, Persilstraat;L219
+Residentie Dorpsdreef;H106
+Residentie Teutonenpark;000322
+"Residentie ""WONEN OP DE HEIDE""";000349
+VME Veldeken Hoofdvereniging;356
+Wuyts Robin;000018
+Boncquet Jan;000039
+Czarnitzki Dirk;000040
+Derua Frans;000033
+Griet Van Laethem;000067
+Haentjens Gina;000020
+Jurgen Asselberghs;241
+O&S BV;281
+Lieve Cappelle;000350
+Li-Ren;000077
+Michiels Eliane - Peeters André;000054
+Mieke Demey;000068
+Nele Weyens;000029
+NV RBM Services BE 0456.432.411;000016
+Peeters Christel;000049
+Van Crombrugge Ethel;000073
+Van Hemelrijck;000047
+Van Molhem Sylvie;000069
+Vanhoof Alice;000023
+Walgraeve Daan;000059
+Willems Rudi;000064
+Bareel (hoofdvereniging);L203
+Residentie College House;358
+De Pastorij - Laakdal;G344
+Residentie PARK 51 - zone A;258
+VME Ramberghof te Leuven, Naamsestraat 58-60;252
+VME te Leuven (Kessel-Lo), Martelarenlaan 71/73, Residentie Ella;256
+Vereniging van mede-eigenaars van het gebouw Oud-Zwembad te 3000 Leuven, Hogeschoolplein 2;206
+Residentie Mistral;000283
+Leyndecker II;D131
+Residentie Edelweiss;L194
+"VME ""Residentie De Mes"" te Leuven (Kessel-Lo), Tiensesteenweg 77-87";255
+VME Papenakker;L218
+Viva Immo BV;000313
+Molenstraat;G355
+*T* - DOMEIN BERENGOED;R332
+Residentie Damn;314
+PARKING DE LOFT;G256
+Residentie De Bemme Ooststatiestraat 56-58 te Kontich;322
+R - MOESTOEMAATHEIDE;G014
+Cennet Inceoğlu;000342
+E - ZIMMER II;R102
+L - HERMELYN;G264
+Cartijnenveld – Cartijnenveld B5;000314
