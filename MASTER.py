@@ -1,3 +1,4 @@
+import csv
 import os
 import unidecode
 import pandas as pd
@@ -10,19 +11,27 @@ from Document import Document
 
 CONFIG_FILE = os.path.join(os.path.expanduser("~"), "excel_converter_settings.ini")
 RELATIECODES_FILE = "relatiecodes.csv"
+GROOTBOEKREKENINGEN_FILE = "grootboekrekeningen.csv"
+
 RELATIECODES_DF = pd.read_csv(RELATIECODES_FILE, delimiter=';', encoding='utf-8', dtype={'Relatiecode': str})
+
+HIGHEST = None
+LOWEST = None
 
 EXPECTED_COLUMNS_BILLIT = [
     "Order nummer", "Datum", "Vervaldag", "Totaal inclusief", "Totaal exclusief", "Relatiecode"
 ]
 
 EXPECTED_COLUMNS_ERELONEN = [
-    "Order nummer", "Datum", "Vervaldag", "Totaal inclusief", "Totaal exclusief", "Relatiecode"
+    "Gebouw", "Factuurnr", "Totaal brutto", "Totaal netto", "Totaal BTW", "Vervaldag", "Betaald", "Documentnummer",
+    "Documentdatum", "Relatiecode"
 ]
 
 EXPECTED_COLUMNS_RAPPELS = [
     "Gebouw", "Relatiecode", "Factuurnr", "Totaal brutto", "Totaal netto", "Totaal BTW", "Doc nr", "Documentdatum"
 ]
+
+FACTUURNUMMERS = []
 
 month_mapping = {
     "January": 1,
@@ -107,24 +116,30 @@ def view_reference_df():
         current_code = selected_values[1]
 
         # Prompt for new values
-        new_name = simpledialog.askstring("Edit Name", f"Edit Name (current: {current_name}):", initialvalue=current_name)
-        new_code = simpledialog.askstring("Edit Relatiecode", f"Edit Relatiecode (current: {current_code}):", initialvalue=current_code)
+        new_name = simpledialog.askstring("Edit Name", f"Edit Name (current: {current_name}):",
+                                          initialvalue=current_name)
+        new_code = simpledialog.askstring("Edit Relatiecode", f"Edit Relatiecode (current: {current_code}):",
+                                          initialvalue=current_code)
 
         if new_name and new_code:
             # Update the reference DataFrame
-            reference_df.loc[(reference_df['Name'] == current_name) & (reference_df['Relatiecode'] == current_code), ['Name', 'Relatiecode']] = [new_name, new_code]
+            reference_df.loc[
+                (reference_df['Name'] == current_name) & (reference_df['Relatiecode'] == current_code), ['Name',
+                                                                                                         'Relatiecode']] = [
+                new_name, new_code]
 
             # Update the treeview
             tree.item(selected_item, values=(new_name, new_code))
 
     # Button to trigger editing
-    tk.Button(control_frame, text="Edit Selected Row", command=edit_selected_row).grid(row=2, column=0, columnspan=3, pady=5)
+    tk.Button(control_frame, text="Edit Selected Row", command=edit_selected_row).grid(row=2, column=0, columnspan=3,
+                                                                                       pady=5)
 
     # Function to save changes
     def save_changes():
         # Save the DataFrame back to CSV
         save_reference_df(reference_df)
-        log_message("Info: Changes saved successfully!")
+        log_message("127: Info: Changes saved successfully!")
 
     # Save button
     tk.Button(control_frame, text="Save Changes", command=save_changes).grid(row=3, column=0, columnspan=3, pady=5)
@@ -139,7 +154,7 @@ def load_reference_df():
         reference_df = pd.read_csv(RELATIECODES_FILE, delimiter=';', encoding='utf-8')
         return reference_df
     except Exception as e:
-        log_message(f"Error loading the reference file: {e}")
+        log_message(f"142: Error loading the reference file: {e}")
         return pd.DataFrame(columns=['Name', 'Relatiecode'])
 
 
@@ -148,12 +163,68 @@ def save_reference_df(reference_df):
     reference_df.to_csv(RELATIECODES_FILE, sep=';', index=False, encoding='utf-8')
 
 
+def get_column_letter(col_idx):
+    """Convert a 0-based column index to an Excel-style column letter."""
+    col_letter = ''
+    while col_idx > 0:
+        col_idx, remainder = divmod(col_idx - 1, 26)
+        col_letter = chr(65 + remainder) + col_letter
+    return col_letter
+
+
+def check_missing_values_in_columns(df, conversion_folder, filter_column=None):
+    # Columns to check for missing values
+    columns = ["boekjaar_boekjaar (H)", "dagboek_dagboek (H)", "factuur (H)", "periode_periode (H)",
+               "btwregimes_btwregime (H)", "factdat (H)", "relaties_code (H)", "vervdat (H)",
+               "valuta_code (H)", "tebet (H)", "statusfact_status (H)", "codefcbd_codefcbd (H)",
+               "basis (H)", "btwtebet (H)", "boekhpl_reknr (D)", "datum (D)", "bedrag (D)", "btwcodes_btwcode (D)"]
+
+    missing_values_locations = {}
+
+    # Filter based on populated rows if a filter_column is provided
+    if filter_column:
+        populated_df = df[df[filter_column].notna() & (df[filter_column] != '')]
+    else:
+        populated_df = df  # Check all rows if no filter column is specified
+
+    # Iterate over columns and find missing values
+    for column in columns:
+        if column in df.columns:
+            # Check for missing values (NaN or empty strings)
+            missing = populated_df[column].isna() | (populated_df[column] == '')
+            if missing.any():
+                col_idx = df.columns.get_loc(column)  # Get the column index
+                col_letter = get_column_letter(col_idx + 1)  # Convert index to Excel column letter (1-based index)
+
+                # Get the row indices where the column has missing values
+                missing_rows = missing[missing].index.tolist()
+
+                # Store the missing locations as (column_letter, row_number)
+                missing_locations = [(col_letter, row + 1) for row in missing_rows]
+                missing_values_locations[column] = missing_locations
+            else:
+                missing_values_locations[column] = []  # No missing values in this column
+        else:
+            # If the column does not exist in the DataFrame
+            missing_values_locations[column] = [("Unknown", row + 1) for row in range(len(df))]
+
+    # Save missing values locations to a text file
+    missing_order_nummers_file = os.path.join(conversion_folder, "missing_values.txt")
+    with open(missing_order_nummers_file, "w") as f:
+        for column, locations in missing_values_locations.items():
+            for location in locations:
+                f.write(f"Missing value in cell '{column}' at location: {location}\n")
+
+    return missing_values_locations
+
+
 def check_missing_relatiecodes(merged_df, name_column):
     """
     General function to check missing 'Relatiecodes' for any DataFrame.
     Handles both Billit and Erelonen cases.
     """
     # Normalize names
+    merged_df = merged_df.copy()
     merged_df['cleaned_name'] = merged_df[name_column].apply(lambda name: unidecode.unidecode(str(name)).strip())
 
     # Find rows with missing Relatiecode
@@ -164,8 +235,10 @@ def check_missing_relatiecodes(merged_df, name_column):
         missing_codes_list = missing_codes['cleaned_name'].unique().tolist()
 
         for i, cleaned_name in enumerate(missing_codes_list, start=1):
-            code = simpledialog.askstring("Missing Code", f"Enter Relatiecode for {cleaned_name} ({i}/{len(missing_codes_list)}):")
-            if code:
+            code = None
+            while not code:
+                code = simpledialog.askstring("Missing Code",
+                                              f"Enter Relatiecode for {cleaned_name} ({i}/{len(missing_codes_list)}):")
                 index = merged_df[merged_df['cleaned_name'] == cleaned_name].index[0]
                 merged_df.at[index, 'Relatiecode'] = code
 
@@ -174,7 +247,7 @@ def check_missing_relatiecodes(merged_df, name_column):
                 with open(RELATIECODES_FILE, mode='a', newline='', encoding='utf-8') as f:
                     new_row.to_csv(f, header=False, index=False, sep=';')
 
-        log_message(f"All missing Relatiecodes have been entered.")
+        log_message(f"233: All missing Relatiecodes have been entered.")
 
 
 def check_column_names(df, expected_columns):
@@ -241,17 +314,17 @@ def validate_reference_file(reference_df):
     # Since multiple names sharing the same 'Relatiecode' is allowed, no need to check that.
 
     # If no inconsistencies found
-    log_message("Reference file is valid. No duplicate 'Relatiecode' entries found for the same name.")
+    log_message("300: Reference file is valid. No duplicate 'Relatiecode' entries found for the same name.")
 
 
-def clean_and_normalize_dataframe(input_df):
-    input_df['cleaned_name'] = input_df[input_df.columns[3]].apply(clean_text)
+def clean_and_normalize_dataframe(input_df, name_column):
+    input_df['cleaned_name'] = input_df[input_df.columns[name_column]].apply(clean_text)
     return input_df
 
 
-def merge_dataframes(input_df):
+def merge_dataframes(input_df, name_column):
     # Clean and normalize the data
-    input_df_cleaned = clean_and_normalize_dataframe(input_df)
+    input_df_cleaned = clean_and_normalize_dataframe(input_df, name_column)
 
     # Merge using the 'cleaned_name' for matching, and the 'Name' column from RELATIECODES_DF
     merged_df = pd.merge(input_df_cleaned, RELATIECODES_DF, how='left', left_on='cleaned_name', right_on='Name')
@@ -267,15 +340,14 @@ def create_docs_from_excel_Billit(prepared_df, conversion_folder):
     try:
         missing_columns = check_column_names(prepared_df, EXPECTED_COLUMNS_BILLIT)
         if missing_columns:
-            log_message(f"Missing columns: {missing_columns}")
+            log_message(f"326: Missing prepared_df columns: {missing_columns}")
             return []
     except Exception as e:
-        log_message(f"Error reading the Excel file: {e}")
+        log_message(f"329: Error reading the Excel file: {e}")
         return []
 
     docs = []
     missing_order_nummers = []
-
     for index, row in prepared_df.iterrows():
         try:
             # Handle Order nummer and check for missing
@@ -296,7 +368,7 @@ def create_docs_from_excel_Billit(prepared_df, conversion_folder):
                 nummer_parts = [None, None, None]
 
             dagboek, boekjaar, nummer = nummer_parts
-            factuurcode = ""
+            factuurcode = "F"
             if dagboek == "CN1":
                 dagboek = "CN"
                 factuurcode = "C"
@@ -329,7 +401,7 @@ def create_docs_from_excel_Billit(prepared_df, conversion_folder):
             docs.append(doc)
 
         except Exception as e:
-            log_message(f"Error processing row: {e}")
+            log_message(f"338: Error processing row: {e}")
             continue
 
     # Write missing Order nummers to a file
@@ -344,27 +416,27 @@ def create_docs_from_excel_Billit(prepared_df, conversion_folder):
 
 def create_docs_from_excel_Erelonen(filepath):
     """Reads Excel file and creates a list of Document objects for conversion Erelonen, with options to skip rows and filter by year and month."""
+    global HIGHEST, LOWEST
     try:
         df = pd.read_excel(filepath)
         # Filtering MAAND EN JAAR TOE TE VOEGEN
         missing_columns = check_column_names(df, EXPECTED_COLUMNS_ERELONEN)
         if missing_columns:
-            log_message(f"Missing columns :{missing_columns}")
+            log_message(f"408: Missing columns :{missing_columns}")
             return []
 
     except Exception as e:
-        log_message(f"Error reading the Excel file: {e}")
+        log_message(f"412: Error reading the Excel file: {e}")
         return []
 
     docs = []
+
     for _, row in df.iterrows():
         try:
             datum = row["Documentdatum"]
             vervaldatum = pd.to_datetime(row["Vervaldag"], errors='coerce')
             tebetalen = abs(row["Totaal brutto"])
             basisbedrag = abs(row["Totaal netto"])
-            omschrijving = abs(row["Betreft"])
-
             factuurnr = str(row["Factuurnr"])
 
             # Filter factuurnummers that don't start with "AF"
@@ -374,22 +446,56 @@ def create_docs_from_excel_Erelonen(filepath):
             if pd.isnull(datum) or pd.isnull(vervaldatum):
                 raise ValueError("Invalid dates in the row.")
 
+            # Split only if valid
+            if "/" in factuurnr:
+                nummer_parts = factuurnr.split("/")
+            else:
+                nummer_parts = [None, None]
+
+            dagboek, factuurnummer = nummer_parts
+            factuurnummer = factuurnummer[2::]
+            FACTUURNUMMERS.append(factuurnummer)
+
+            if dagboek == "AF1":
+                dagboek = "VK2"
+            elif dagboek == "AF2":
+                dagboek = "VK3"
+
             # Create the Document object
             doc = Document(
                 boekjaar=datum.year,
-                dagboek="Erelonen",  # You can modify this as needed
-                nummer=factuurnr,
+                dagboek=dagboek,
+                nummer=factuurnummer,
                 datum=datum,
                 relatiecode=row["Relatiecode"],
                 vervaldatum=vervaldatum,
                 tebetalen=tebetalen,
                 basisbedrag=basisbedrag,
-                omschrijving=omschrijving
+                omschrijving="",
+                rekening="NA"
             )
+
+            if HIGHEST is None or factuurnummer > HIGHEST:
+                HIGHEST = factuurnummer
+
+            if LOWEST is None or factuurnummer < LOWEST:
+                LOWEST = factuurnummer
+
+            if doc.relatiecode.startswith("H"):
+                doc.boekhpl_reknr = "700010"
+            elif doc.relatiecode.startswith("D"):
+                doc.boekhpl_reknr = "700020"
+            elif doc.relatiecode.startswith("L"):
+                doc.boekhpl_reknr = "700030"
+            elif doc.relatiecode.startswith("G"):
+                doc.boekhpl_reknr = "700040"
+            elif doc.relatiecode.startswith("R"):
+                doc.boekhpl_reknr = "700050"
+
             docs.append(doc)
 
         except Exception as e:
-            log_message(f"Error processing row: {e}")
+            log_message(f"448: Error processing row: {e}")
             continue
 
     return docs
@@ -404,16 +510,16 @@ def create_docs_from_excel_Rappels(file_path):
         missing_columns = check_column_names(df, EXPECTED_COLUMNS_RAPPELS)
 
         if missing_columns:
-            log_message(f"Missing column(s): {missing_columns}")
+            log_message(f"463: Missing column(s): {missing_columns}")
             return []
 
         factuurnummer_col = next((col for col in possible_factuurnummer_columns if col in df.columns), None)
         if not factuurnummer_col:
-            log_message("Missing 'Factuurnummer' or 'Factuurnr' column.")
+            log_message("468: Missing 'Factuurnummer' or 'Factuurnr' column.")
             return []
 
     except Exception as e:
-        log_message(f"Error reading the Excel file: {e}")
+        log_message(f"472: Error reading the Excel file: {e}")
         return []
 
     docs = []
@@ -445,7 +551,7 @@ def create_docs_from_excel_Rappels(file_path):
             )
             docs.append(doc)
         except Exception as e:
-            log_message(f"Error processing row: {e}")
+            log_message(f"504: Error processing row: {e}")
             continue
 
     docs.sort(key=lambda x: x.nummer)
@@ -453,49 +559,62 @@ def create_docs_from_excel_Rappels(file_path):
     return docs
 
 
-def load_and_merge_file(input_path):
+def initialize_grootboekrekeningen_file():
+    """Initializes the grootboekrekeningen.csv file if it doesn't exist."""
+    if not os.path.exists(GROOTBOEKREKENINGEN_FILE):
+        with open(GROOTBOEKREKENINGEN_FILE, mode='w', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f, delimiter=';')
+            writer.writerow(['Name', 'Grootboekrekening'])  # Add header to the CSV file
+        log_message(f"{GROOTBOEKREKENINGEN_FILE} file created with header.")
+
+
+def load_and_merge_file(input_path, type):
     """
     Helper function to load, clean, and merge the input file with RELATIECODES_DF.
     This function is shared between Billit and Erelonen file preparation.
     """
     try:
         # Load the input DataFrame
-        input_df = pd.read_excel(input_path)
+        if type == "erelonen":
+            input_df = pd.read_excel(input_path, header=1)
+            input_df = clean_and_normalize_dataframe(input_df, 0)
+            merged_df = merge_dataframes(input_df, 0)
+
+        elif type == "billit":
+            input_df = pd.read_excel(input_path)
+            input_df = clean_and_normalize_dataframe(input_df, 3)
+            merged_df = merge_dataframes(input_df, 3)
 
         # Validate the reference file
         validate_reference_file(RELATIECODES_DF)
 
-        # Clean and normalize the input DataFrame
-        input_df = clean_and_normalize_dataframe(input_df)
-
         # Merge with the reference file (RELATIECODES_DF)
-        merged_df = merge_dataframes(input_df)
 
         return merged_df
 
     except Exception as e:
-        log_message(f"Error loading or merging data: {e}")
+        log_message(f"537: Error loading or merging data: {e}")
         return None
 
 
-def prepare_erelonen_excel_file(month, year, save_folder):
+def prepare_erelonen_excel_file(input_path, month, year, save_folder):
     try:
         ensure_save_folder_exists(save_folder)
 
-        input_path = default_input_file.get()
+        # Check if input path exists
         if not input_path or not os.path.exists(input_path):
-            log_message("Please select a valid input file.")
+            log_message("547: Please select a valid input file.")
             return None
 
-        merged_df = load_and_merge_file(input_path)
-        if merged_df is None:
+        # Load the Excel file (skip the first two rows to get headers from the third row)
+        df = pd.read_excel(input_path, skiprows=2)
+        if df is None or df.empty:
+            log_message("553: The loaded DataFrame is empty.")
             return None
 
-        merged_df = merged_df.iloc[2:].reset_index(drop=True)
-
-        check_missing_relatiecodes(merged_df, "Gebouw")
-
-        merged_df.rename(columns={
+        # Rename columns for clarity (adjust according to the actual input data structure)
+        df.rename(columns={
+            'Unnamed: 0': 'Gebouw',
             'Unnamed: 1': 'Factuurnr',
             'Unnamed: 2': 'Totaal brutto',
             'Unnamed: 3': 'Totaal netto',
@@ -506,24 +625,57 @@ def prepare_erelonen_excel_file(month, year, save_folder):
             'Unnamed: 8': 'Documentdatum'
         }, inplace=True)
 
+        log_message(f"569: Columns in merged_df: {list(df.columns)}")
+
+        # Merge with the reference DataFrame (RELATIECODES_DF) to get the 'Relatiecode'
+        merged_df = pd.merge(df, RELATIECODES_DF, how='left', left_on='Gebouw', right_on='Name')
+
+        # Check if the "Relatiecode" column exists after the merge
+        if 'Relatiecode' not in merged_df.columns:
+            log_message("576: Error: 'Relatiecode' column is missing after merging with the reference data.")
+            return None
+
+        # Filter rows where 'Factuurnr' starts with 'AF'
         df_filtered = merged_df[merged_df['Factuurnr'].str.startswith('AF', na=False)]
-        df_filtered.loc[:, 'Documentdatum'] = pd.to_datetime(df_filtered['Documentdatum'], errors='coerce')
+
+        check_missing_relatiecodes(df_filtered, "Gebouw")
+
+        # Convert 'Documentdatum' to datetime and log any invalid entries
+        df_filtered = df_filtered.copy()
+        df_filtered['Documentdatum'] = pd.to_datetime(df_filtered['Documentdatum'], errors='coerce')
+
+        # Log and filter out rows with invalid 'Documentdatum' values (NaT after conversion)
+        invalid_dates = df_filtered[df_filtered['Documentdatum'].isna()]
+        if not invalid_dates.empty:
+            log_message(
+                f"590: Warning: Found invalid dates in the following rows:\n{invalid_dates[['Factuurnr', 'Documentdatum']]}")
+
+        # Keep only rows with valid dates
+        df_filtered = df_filtered[df_filtered['Documentdatum'].notna()]
+
+        # Filter by the specified year and month
         df_filtered = df_filtered[
             (df_filtered['Documentdatum'].dt.year == year) &
             (df_filtered['Documentdatum'].dt.month == month)
-        ]
+            ]
 
-        cols = merged_df.columns.tolist()
-        cols.insert(1, cols.pop(cols.index('Relatiecode')))
-        df_filtered = df_filtered[cols]
+        # Reordering columns: Move 'Relatiecode' to the second position if it exists
+        cols = df_filtered.columns.tolist()
+        if 'Relatiecode' in cols:
+            cols.insert(1, cols.pop(cols.index('Relatiecode')))
+            df_filtered = df_filtered[cols]
 
-        save_path = os.path.join(save_folder, "erelonen.xlsx")
-        df_filtered.to_excel(save_path, index=False)
+        # Save the filtered DataFrame to an Excel file
+        output_file_path = os.path.join(save_folder, "erelonen.xlsx")
+        print(df_filtered.columns)
 
-        return save_path
+        df_filtered.to_excel(output_file_path, index=False)
+
+        log_message(f"611: Data saved to {output_file_path}")
+        return output_file_path
 
     except Exception as e:
-        log_message(f"An error occurred: {e}")
+        log_message(f"615: An error occurred: {e}")
         return None
 
 
@@ -533,13 +685,15 @@ def prepare_billit_excel_file(input_path, save_folder):
 
         # Check if input path exists
         if not input_path or not os.path.exists(input_path):
-            log_message("Please select a valid input file.")
+            log_message("625: Please select a valid input file.")
             return None
 
         # Load and merge data using helper function
-        merged_df = load_and_merge_file(input_path)
+        merged_df = load_and_merge_file(input_path, "billit")
         if merged_df is None:
             return None
+
+        log_message(f"633: Columns in merged_df: {list(merged_df.columns)}")
 
         # Filter rows based on 'Order nummer' for facturen (VK-) and creditnota's (CN1-)
         df_facturen = merged_df[merged_df['Order nummer'].str.startswith('VK-', na=False)]
@@ -562,7 +716,7 @@ def prepare_billit_excel_file(input_path, save_folder):
         return df_filtered
 
     except Exception as e:
-        log_message(f"An error occurred: {e}")
+        log_message(f"656: An error occurred: {e}")
         return None
 
 
@@ -584,15 +738,16 @@ def save_excel_file(df, folder_path, add=""):
     full_path = os.path.join(folder_path, filename)
     try:
         df.to_excel(full_path, index=False)
-        log_message(f"Excel file saved at {full_path}")
+        log_message(f"678: Excel file saved at {full_path}")
     except Exception as e:
-        log_message(f"Error saving the Excel file: {e}")
+        log_message(f"680: Error saving the Excel file: {e}")
 
 
 def convert():
+    initialize_grootboekrekeningen_file()
     output_folder = default_output_folder.get()
     if not output_folder:
-        log_message("No output folder set.")
+        log_message("686: No output folder set.")
         return
 
     current_time_folder = datetime.now().strftime("%H_%M")
@@ -608,12 +763,10 @@ def convert():
     if conversion_type == "Billit":
         # Prepare the Billit file, which loads and merges data
         prepared_df = prepare_billit_excel_file(default_input_file.get(), output_folder_path)
-
         # Check if the DataFrame `prepared_df` is valid
         if prepared_df is not None and not prepared_df.empty:
             # Call the function that creates the list of Document objects
             docs = create_docs_from_excel_Billit(prepared_df, output_folder_path)
-
             # Check if `docs` contains any documents
             if docs:
                 # Convert each Document object to a dictionary and create a DataFrame
@@ -626,24 +779,54 @@ def convert():
                     # Sort the DataFrame by 'factuur (H)'
                     df = df.sort_values(by='factuur (H)', na_position='last')
 
-                # Save the DataFrame if it's not empty
                 if not df.empty:
-                    save_excel_file(df, output_folder_path, "billit")
+                    # Check for missing values in the specified columns
+                    missing_values = check_missing_values_in_columns(df, output_folder_path)
+
+                    # If no missing values were found in any of the relevant columns
+                    if all(len(locations) == 0 for locations in missing_values.values()):
+                        save_excel_file(df, output_folder_path, "billit")
+                        log_message("727: Info: Excel file saved without missing values.")
+                    else:
+                        # Log the missing values
+                        log_message("730: Warning: Some columns contain empty cells.")
+                        for column, locations in missing_values.items():
+                            if locations:  # If there are missing values in this column
+                                log_message(f"733: Missing values in column '{column}': {locations}")
+
+                        # Save the file with a different name to indicate missing cells
+                        save_excel_file(df, output_folder_path, "withemptycells")
+                        log_message("737: Info: Excel file saved with missing values.")
+
                 else:
-                    log_message("Warning: No data to save in Billit file.")
+                    log_message("740: Warning: No data to save in Billit file.")
             else:
-                log_message("Warning: No documents created for Billit conversion.")
+                log_message("742: Warning: No documents created for Billit conversion.")
         else:
-            log_message("Warning: The prepared Billit DataFrame is empty.")
+            log_message("744: Warning: The prepared Billit DataFrame is empty.")
+
 
     elif conversion_type == "Erelonen":
-        prepared_file_path = prepare_erelonen_excel_file(selected_month, selected_year, output_folder_path)
-        if prepared_file_path:
-            docs = []  # Assume this is populated by another function
-            docs_data = [factuur.to_dict() for factuur in docs]
-            save_excel_file(pd.DataFrame(docs_data), output_folder_path, "erelonen")
 
-    log_message(f"Files saved to {output_folder_path}")
+        prepared_file_path = prepare_erelonen_excel_file(default_input_file.get(), selected_month, selected_year,
+                                                         output_folder_path)
+
+        if prepared_file_path:
+            docs = create_docs_from_excel_Erelonen(prepared_file_path)
+
+            docs_data = [factuur.to_dict() for factuur in docs]
+
+            sorted_data = pd.DataFrame(docs_data).sort_values(by='factuur (H)', na_position='last')
+            print(sorted_data["boekhpl_reknr (D)"])
+            # Perform the check for missing rekeningnummers just before saving
+            sorted_data = check_missing_rekeningnummers(sorted_data, "relaties_code (H)")  # Assuming "Relatiecode" column has the names
+            print(sorted_data["boekhpl_reknr (D)"])
+
+            # Save the updated sorted_data to Excel after the missing rekeningnummers check
+
+            save_excel_file(sorted_data, output_folder_path, str(LOWEST))
+
+    log_message(f"752: Files saved to {output_folder_path}")
 
 
 def update_month_year_visibility(*args):
@@ -660,6 +843,67 @@ def update_month_year_visibility(*args):
         year_dropdown.grid_forget()
 
 
+def check_missing_rekeningnummers(df, name_column):
+    """
+    General function to check missing 'Grootboekrekeningen' for any DataFrame.
+    Handles Erelonen cases.
+    """
+    # Load grootboekrekeningen.csv into a DataFrame, ensuring columns are treated as strings
+    if os.path.exists(GROOTBOEKREKENINGEN_FILE):
+        grootboek_df = pd.read_csv(GROOTBOEKREKENINGEN_FILE, delimiter=';', encoding='utf-8', dtype=str)
+    else:
+        grootboek_df = pd.DataFrame(columns=['Code', 'Grootboekrekening'])  # Ensure 'Code' and 'Grootboekrekening' are strings
+
+    # Ensure 'Code' column is always treated as a string and normalized
+    grootboek_df['Code'] = grootboek_df['Code'].str.strip().str.lower()  # Normalize 'Code' in CSV
+    df = df.copy()  # Make a copy of the dataframe to avoid modifying in place
+    df['cleaned_name'] = df[name_column].astype(str).str.strip().str.lower()  # Normalize 'cleaned_name'
+
+    log_message(f"Checking missing rekeningen for: {df['cleaned_name'].unique()}")  # Debugging
+
+    # Find rows where Grootboekrekening is "NA"
+    missing_rekeningen = df[df['boekhpl_reknr (D)'] == "NA"]
+
+    if not missing_rekeningen.empty:
+        # Get unique missing names
+        missing_names_list = missing_rekeningen['cleaned_name'].unique().tolist()
+
+        for i, cleaned_name in enumerate(missing_names_list, start=1):
+            rekening = None
+
+            # Check if a rekening already exists in grootboek_df for this name
+            existing_rekening = grootboek_df[grootboek_df['Code'] == cleaned_name]  # Use 'Code' for checking
+
+            log_message(f"Checking for {cleaned_name} in CSV...")  # Debugging
+
+            if not existing_rekening.empty:
+                # Use the existing rekening if it is already in the grootboek_df
+                rekening = existing_rekening.iloc[0]['Grootboekrekening']
+                log_message(f"Using existing grootboekrekening for {cleaned_name}: {rekening}")
+            else:
+                # Prompt for the rekening if it doesn't exist in the CSV file
+                while not rekening:
+                    rekening = simpledialog.askstring(
+                        "Missing rekening",
+                        f"Enter erelonen grootboekrekening for {cleaned_name} ({i}/{len(missing_names_list)}):"
+                    )
+
+            # Update the rekening in the DataFrame
+            df.loc[df['cleaned_name'] == cleaned_name, 'boekhpl_reknr (D)'] = rekening
+
+            # Append to the grootboek_df if it's a new entry
+            if existing_rekening.empty:
+                new_row = pd.DataFrame({'Code': [cleaned_name], 'Grootboekrekening': [rekening]})
+                grootboek_df = pd.concat([grootboek_df, new_row], ignore_index=True)
+
+        # Save the updated grootboek_df to the CSV file
+        grootboek_df.to_csv(GROOTBOEKREKENINGEN_FILE, sep=';', index=False)
+
+    log_message("All missing rekeningnummers have been entered.")
+
+    return df  # Return the updated DataFrame
+
+
 def log_message(message):
     logbook.config(state='normal')
     logbook.insert(tk.END, f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {message}\n")
@@ -670,6 +914,7 @@ def log_message(message):
 root = tk.Tk()
 
 root.title("Excel to Document Converter")
+
 
 # Create a tab control widget
 tab_control = ttk.Notebook(root)
@@ -684,7 +929,6 @@ input_file_path = default_input_file.get()
 output_folder_path = default_output_folder.get()
 conversion_type_var = tk.StringVar(value="Billit")
 code_factuur = tk.StringVar(value="Factuur")
-
 
 # Tab 1: Convert
 frame1 = tk.Frame(tab1, padx=10, pady=10)
@@ -709,7 +953,7 @@ month_dropdown = tk.OptionMenu(frame1, month_var, *[datetime(2000, i, 1).strftim
 
 year_label = tk.Label(frame1, text="Select Year:")
 year_var = tk.StringVar(value=datetime.now().strftime("%Y"))
-year_dropdown = tk.OptionMenu(frame1, year_var, *[str(i) for i in range(2020, 2031)])
+year_dropdown = tk.OptionMenu(frame1, year_var, *[str(i) for i in range(datetime.now().year - 4, datetime.now().year + 4)])
 
 # Convert Button
 tk.Button(frame1, text="Convert", command=convert, width=30).grid(row=5, columnspan=3, pady=10)

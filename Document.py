@@ -1,5 +1,5 @@
 class Document:
-    def __init__(self, boekjaar, dagboek, nummer, datum, relatiecode, vervaldatum, tebetalen, basisbedrag, omschrijving):
+    def __init__(self, boekjaar, dagboek, nummer, datum, relatiecode, vervaldatum, tebetalen, basisbedrag, omschrijving, rekening=700002):
         self.boekjaar = boekjaar
         self.dagboek = dagboek
         self.nummer = nummer
@@ -24,7 +24,7 @@ class Document:
         self.ogm = ""  # Placeholder
         self.kredbep = ""  # Placeholder
         self.driehoeksverkeer = ""  # Placeholder
-        self.boekhpl_reknr = 700002  # Placeholder
+        self.boekhpl_reknr = rekening  # Placeholder
         self.omschr_d = ""  # Placeholder
         self.datum_d = self.datum  # Placeholder
         self.bedrag_d = self.basisbedrag  # Placeholder

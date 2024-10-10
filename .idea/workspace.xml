@@ -4,19 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="756bc1f7-279f-4293-beff-672313875642" name="Changes" comment="FOR GPT">
-      <change afterPath="$PROJECT_DIR$/MASTER.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Tests/TestCleanText.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sgosjgir.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/pythonProject.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/MASTER.iml" afterDir="false" />
+    <list default="true" id="756bc1f7-279f-4293-beff-672313875642" name="Changes" comment="Extra facturatie goed, erelonen en rappels nog te doen">
+      <change afterPath="$PROJECT_DIR$/grootboekrekeningen.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Document.py" beforeDir="false" afterPath="$PROJECT_DIR$/Document.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Document_converters.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/checks.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/reference_codes.csv" beforeDir="false" afterPath="$PROJECT_DIR$/relatiecodes.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MASTER.py" beforeDir="false" afterPath="$PROJECT_DIR$/MASTER.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/relatiecodes.csv" beforeDir="false" afterPath="$PROJECT_DIR$/relatiecodes.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,20 +41,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Python tests.Python tests in TestCleanText.py.executor": "Run",
-    "Python.Document_converters.executor": "Run",
-    "Python.MASTER.executor": "Run",
-    "Python.checks.executor": "Run",
-    "Python.cleancsv.executor": "Run",
-    "Python.main.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/antonsteegmans/VFDS/pythonProject"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Python tests.Python tests in TestCleanText.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Document_converters.executor&quot;: &quot;Run&quot;,
+    &quot;Python.MASTER.executor&quot;: &quot;Run&quot;,
+    &quot;Python.checks.executor&quot;: &quot;Run&quot;,
+    &quot;Python.cleancsv.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/antonsteegmans/VFDS/pythonProject&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\antonsteegmans\VFDS\pythonProject" />
@@ -91,12 +84,21 @@
       <option name="project" value="LOCAL" />
       <updated>1727353602421</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Extra facturatie goed, erelonen en rappels nog te doen">
+      <option name="closed" value="true" />
+      <created>1727795350514</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1727795350514</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="FOR GPT" />
-    <option name="LAST_COMMIT_MESSAGE" value="FOR GPT" />
+    <MESSAGE value="Extra facturatie goed, erelonen en rappels nog te doen" />
+    <option name="LAST_COMMIT_MESSAGE" value="Extra facturatie goed, erelonen en rappels nog te doen" />
   </component>
 </project>
